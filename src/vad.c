@@ -91,7 +91,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   switch (vad_data->state) {    /*miramos en el estado que estavamos antes*/
   case ST_INIT:
     vad_data->state = ST_SILENCE;
-    vad_data->umbral = f.p + 3;
+    vad_data->umbral = f.p + vad_data->alfa1;
     break;
 
   case ST_SILENCE:
