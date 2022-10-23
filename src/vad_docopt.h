@@ -41,6 +41,7 @@ const char help_message[] =
 "   -v, --verbose  Show debug information\n"
 "   -h, --help     Show this screen\n"
 "   --version      Show the version of the project\n"
+"\n"
 "";
 
 const char usage_pattern[] =

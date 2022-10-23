@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "pav_analysis.h"
 #include "vad.h"
+#include "pav_analysis.h"
 
 const float FRAME_TIME = 10.0F; /* in ms. */
 
@@ -42,8 +43,7 @@ Features compute_features(const float *x, int N) {
    * For the moment, compute random value between 0 and 1 
    */
   Features feat;
-  feat.p = compute_power(x,N);
-  //feat.zcr = feat.p = feat.am = (float) rand()/RAND_MAX;
+  feat.p = compute_power(x,N);   //la tasa de cruces por cero afecta muy poco, ir cambiando la potencia i ya solo tocar la zcr para perfeccionar
   return feat;
 }
 
@@ -89,10 +89,10 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   Features f = compute_features(x, vad_data->frame_length);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
-  switch (vad_data->state) {
+  switch (vad_data->state) {    /*miramos en el estado que estavamos antes*/
   case ST_INIT:
     vad_data->state = ST_SILENCE;
-    vad_data->umbral=f.p + vad_data->alfa1;
+    vad_data->umbral = f.p + vad_data->alfa1;
     break;
 
   case ST_SILENCE:
