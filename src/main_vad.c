@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sndfile.h>
-
+#include "pav_analysis.h"
 #include "vad.h"
 #include "vad_docopt.h"
 
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  vad_data = vad_open(sf_info.samplerate);
+  vad_data = vad_open(sf_info.samplerate, number_init, number_ms, number_mv, n_alpha1, n_alpha2);
   /* Allocate memory for buffers */
   frame_size   = vad_frame_size(vad_data);
   buffer       = (float *) malloc(frame_size * sizeof(float));
