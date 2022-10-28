@@ -16,6 +16,7 @@ typedef struct {
   float sampling_rate;
   unsigned int frame_length;
   float last_feature; /* for debuggin purposes */
+<<<<<<< HEAD
   float k0;
   float k1;
   float k2;
@@ -26,13 +27,21 @@ typedef struct {
   unsigned int counter_ms; //Número de tramas que permaneceremos en Maybe Silence
   unsigned int counter_mv; //Número de tramas que permaneceremos en Maybe Voice
 
+=======
+  float umbral;
+  float alfa1;
+>>>>>>> 0a300a8407aabcb8beab878b9c48fe2df1c1acf5
 } VAD_DATA;
 
 /* Call this function before using VAD: 
    It should return allocated and initialized values of vad_data
 
    sampling_rate: ... the sampling rate */
+<<<<<<< HEAD
 VAD_DATA *vad_open(float sampling_rate,int number_init, int number_ms, int number_mv, float n_alpha1, float n_alpha2);
+=======
+VAD_DATA *vad_open(float sampling_rate, float alfa1);
+>>>>>>> 0a300a8407aabcb8beab878b9c48fe2df1c1acf5
 
 /* vad works frame by frame.
    This function returns the frame size so that the program knows how

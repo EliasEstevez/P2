@@ -3,7 +3,11 @@
 #include <stdio.h>
 
 #include "vad.h"
+<<<<<<< HEAD
 #include "pav_analysis.h"//utilización de script para proporcionar valores analiticos
+=======
+#include "pav_analysis.h"
+>>>>>>> 0a300a8407aabcb8beab878b9c48fe2df1c1acf5
 
 const float FRAME_TIME = 10.0F; /* in ms. */
 
@@ -43,12 +47,16 @@ Features compute_features(const float *x, int N) {
    * For the moment, compute random value between 0 and 1 
    */
   Features feat;
+<<<<<<< HEAD
   //Utilizando las funciones de analysis.c podemos obtener los parametros deseados
   //para asi poder marcar lindares que nos dara informacion de en que situación nos encontramos
   feat.zcr=compute_zcr(x,N,16000); 
   feat.p=compute_power(x,N);
   feat.am=compute_am(x,N);
 
+=======
+  feat.p = compute_power(x,N);   //la tasa de cruces por cero afecta muy poco, ir cambiando la potencia i ya solo tocar la zcr para perfeccionar
+>>>>>>> 0a300a8407aabcb8beab878b9c48fe2df1c1acf5
   return feat;
   
 }
@@ -57,11 +65,16 @@ Features compute_features(const float *x, int N) {
  * TODO: Init the values of vad_data
  */
 
+<<<<<<< HEAD
 VAD_DATA * vad_open(float rate,int number_init, int number_ms, int number_mv, float n_alpha1, float n_alpha2) {
+=======
+VAD_DATA * vad_open(float rate, float alfa1) {
+>>>>>>> 0a300a8407aabcb8beab878b9c48fe2df1c1acf5
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
+<<<<<<< HEAD
   //Queremos cambiar la dimension de la ventana
   vad_data->k0 = 0;
   vad_data->k1 = 0;
@@ -72,6 +85,9 @@ VAD_DATA * vad_open(float rate,int number_init, int number_ms, int number_mv, fl
   vad_data->counter_init = number_init;
   vad_data->counter_ms = number_ms;
   vad_data->counter_mv = number_mv;
+=======
+  vad_data->alfa1=alfa1;
+>>>>>>> 0a300a8407aabcb8beab878b9c48fe2df1c1acf5
   return vad_data;
 }
 
@@ -106,6 +122,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x,float t) {
   Features f = compute_features(x, vad_data->frame_length);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
+<<<<<<< HEAD
   switch (vad_data->state) {
   case ST_INIT: 
   
@@ -175,6 +192,21 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x,float t) {
       //printf("De MS me voy a V\n");
     }else if(vad_data->counter_N == vad_data->counter_ms){
       //printf("He llegado al máximo de MS\n");
+=======
+  switch (vad_data->state) {    /*miramos en el estado que estavamos antes*/
+  case ST_INIT:
+    vad_data->state = ST_SILENCE;
+    vad_data->umbral = f.p + vad_data->alfa1;
+    break;
+
+  case ST_SILENCE:
+    if (f.p > vad_data->umbral)
+      vad_data->state = ST_VOICE;
+    break;
+
+  case ST_VOICE:
+    if (f.p < vad_data->umbral)
+>>>>>>> 0a300a8407aabcb8beab878b9c48fe2df1c1acf5
       vad_data->state = ST_SILENCE;
       vad_data->counter_N = 0;
       //printf("De MS me voy a S\n");
