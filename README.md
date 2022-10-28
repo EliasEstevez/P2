@@ -105,21 +105,31 @@ Ejercicios
   continuación, una captura de `wavesurfer` en la que se vea con claridad la señal temporal, el contorno de
   potencia y la tasa de cruces por cero, junto con el etiquetado manual de los segmentos.
 
+  ![Alt text](PAV\P2\Captura1.png "Segmentos de Voz y Silencio")
+
 
 - A la vista de la gráfica, indique qué valores considera adecuados para las magnitudes siguientes:
 
 	* Incremento del nivel potencia en dB, respecto al nivel correspondiente al silencio inicial, para
 	  estar seguros de que un segmento de señal se corresponde con voz.
 
+	*Viendo la imagen, podriamos poner como todos los trozos de voz superan los 60dB en la mayoria del segmento, respecto los tramos de silencio*
+
 	* Duración mínima razonable de los segmentos de voz y silencio.
 
+	*La duración mínima de los segmentos de voz es de 0,75s mientras que de los segmentos de silencio seria de 0,5*
+
 	* ¿Es capaz de sacar alguna conclusión a partir de la evolución de la tasa de cruces por cero?
+
+	*La tasa de cruces por cero nos indica si es muy alta, la aparicion de consonantes sordas (fonema /s), también podemos observar que en los silencios, al tener un ruido alto, se muestran más picos que en los tramos de voz*
 
 
 ### Desarrollo del detector de actividad vocal
 
 - Complete el código de los ficheros de la práctica para implementar un detector de actividad vocal en
   tiempo real tan exacto como sea posible. Tome como objetivo la maximización de la puntuación-F `TOTAL`.
+
+  
 
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 

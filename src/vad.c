@@ -56,6 +56,7 @@ VAD_DATA * vad_open(float rate, float alfa1) {
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
+  vad_data->alfa1=alfa1;
   return vad_data;
 }
 
