@@ -44,18 +44,12 @@ Features compute_features(const float *x, int N) {
    * For the moment, compute random value between 0 and 1 
    */
   Features feat;
-<<<<<<< HEAD
-  feat.zcr = compute_zcr(x, N, 16000);
-  feat.am = compute_am(x, N);
-  feat.p = compute_power(x,N);   //la tasa de cruces por cero afecta muy poco, ir cambiando la potencia i ya solo tocar la zcr para perfeccionar
-=======
   //Utilizando las funciones de analysis.c podemos obtener los parametros deseados
   //para asi poder marcar lindares que nos dara informacion de en que situación nos encontramos
   feat.zcr=compute_zcr(x,N,16000); 
   feat.p=compute_power(x,N);
   feat.am=compute_am(x,N);
 
->>>>>>> 6f0b0fbfff56b6249505210491ff263d0252d8f7
   return feat;
   
 }
@@ -69,21 +63,17 @@ VAD_DATA * vad_open(float rate,int number_init, int number_ms, int number_mv, fl
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
-<<<<<<< HEAD
-  vad_data->alfa1=alfa1;
-=======
   //Queremos cambiar la dimension de la ventana
   vad_data->k0 = 0;
   vad_data->k1 = 0;
   vad_data->k2 = 0;
-  vad_data->alpha1 = alfa1;
-  vad_data->alpha2 = alfa2;
+  vad_data->alfa1 = alfa1;
+  vad_data->alfa2 = alfa2;
   vad_data->counter_N = 0;
   vad_data->counter_init = number_init;
   vad_data->counter_ms = number_ms;
   vad_data->counter_mv = number_mv;
   return vad_data;
->>>>>>> 6f0b0fbfff56b6249505210491ff263d0252d8f7
 }
 
 VAD_STATE vad_close(VAD_DATA *vad_data) {
@@ -126,8 +116,8 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x,float t) {
     }else{
       vad_data->state = ST_SILENCE;
       vad_data->k0 = 10*log10(vad_data->k0/vad_data->counter_N);
-      vad_data->k1 = vad_data->k0 + vad_data->alpha1;
-      vad_data->k2 = vad_data->k1 + vad_data->alpha2;
+      vad_data->k1 = vad_data->k0 + vad_data->alfa1;
+      vad_data->k2 = vad_data->k1 + vad_data->alfa2;
       vad_data->counter_N = 0;
 
       /*
@@ -140,6 +130,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x,float t) {
       printf("El valor de alpha1 introducido es: %f\n", vad_data->alpha1);
       printf("El valor de alpha2 introducido es: %f\n", vad_data->alpha2);
       */
+    }
     break;
 
   case ST_SILENCE:
