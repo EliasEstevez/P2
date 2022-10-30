@@ -7,6 +7,10 @@
 
 
 const float FRAME_TIME = 10.0F; /* in ms. */
+unsigned int cnt_mb_voice = 0; /*contador tramas en mb_voice*/
+unsigned int cnt_mb_silence = 0;  /*contador tramas en mb_silence*/
+unsigned int cnt_th_init = 0; /*contador tramas para threshold en init*/
+const float fm = 16000;
 
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
@@ -46,7 +50,7 @@ Features compute_features(const float *x, int N) {
   Features feat;
   //Utilizando las funciones de analysis.c podemos obtener los parametros deseados
   //para asi poder marcar lindares que nos dara informacion de en que situación nos encontramos
-  feat.zcr=compute_zcr(x,N,16000); 
+  feat.zcr=compute_zcr(x,N,fm); 
   feat.p=compute_power(x,N);
   feat.am=compute_am(x,N);
 
@@ -58,11 +62,12 @@ Features compute_features(const float *x, int N) {
  * TODO: Init the values of vad_data
  */
 
-VAD_DATA * vad_open(float rate,int number_init, int number_ms, int number_mv, float alfa1, float alfa2) {   //lo mismo de antes, no creo q haga falta mas q alfa1 alfa2
+VAD_DATA * vad_open(float rate, float alfa1, float alfa2) {  
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
+<<<<<<< HEAD
   //Queremos cambiar la dimension de la ventana
   vad_data->k0 = 0;
   vad_data->k1 = 0;
@@ -73,14 +78,24 @@ VAD_DATA * vad_open(float rate,int number_init, int number_ms, int number_mv, fl
   vad_data->counter_init = number_init;
   vad_data->counter_ms = number_ms;
   vad_data->counter_mv = number_mv;
+=======
+  vad_data->alfa1 = alfa1;
+  vad_data->alfa2 = alfa2;
+  vad_data->counter = 0;
+  vad_data->MAX_MB = 5;           //Mirar aquestes avriables i buscar "les nostres propies"
+  vad_data->MIN_VOICE = 30;
+  vad_data->MIN_SILENCE = 10;
+  vad_data->N_TRAMAS = 3;
+
+>>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
   return vad_data;
 }
 
 VAD_STATE vad_close(VAD_DATA *vad_data) {
   /* 
-   * TODO: decide what to do with the last undecided frames
+   * DONE: decide what to do with the last undecided frames
    */
-  VAD_STATE state = vad_data->state; 
+  VAD_STATE state = vad_data->state;  //-->>>mirar si acaba con le anterior o siempre com silencio
   free(vad_data);
   return state;
 }
@@ -94,14 +109,12 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
  * using a Finite State Automata
  */
 
-VAD_STATE vad(VAD_DATA *vad_data, float *x,float t) {
+VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
   /* 
    * TODO: You can change this, using your own features,
    * program finite state automaton, define conditions, etc.
    */
-  //printf("Instante: %f\n", t);
-
 
   Features f = compute_features(x, vad_data->frame_length);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
@@ -109,6 +122,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x,float t) {
   switch (vad_data->state) {
   case ST_INIT: 
   
+<<<<<<< HEAD
   if(vad_data->counter_N < vad_data->counter_init){
       vad_data->counter_N ++;
       vad_data->k0 += pow(10, f.p/10);
@@ -119,6 +133,11 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x,float t) {
       vad_data->k1 = vad_data->k0 + vad_data->alfa1;
       vad_data->k2 = vad_data->k1 + vad_data->alfa2;
       vad_data->counter_N = 0;
+=======
+    vad_data->k1  = f.p + vad_data->alfa1-0.5;  // -0.45
+    vad_data->k2  = f.p + vad_data->alfa2 +7.61;  // +7.5
+    vad_data->state = ST_SILENCE;
+>>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
 
       /*
       printf("El nivel k0 es %f\n", vad_data->k0);

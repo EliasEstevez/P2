@@ -18,11 +18,7 @@ typedef struct {
     /* options with arguments */
     char *alfa1;
     char *input_wav;
-    char *n_alpha1;
-    char *n_alpha2;
-    char *number_init;
-    char *number_ms;
-    char *number_mv;
+    //->>>>>>>>>>>>>>>char *alfa2;
     char *output_vad;
     char *output_wav;
     /* special */
@@ -251,8 +247,7 @@ int parse_args(Tokens *ts, Elements *elements) {
     return 0;
 }
 
-int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
-                  const char *version){
+int elems_to_args(Elements *elements, DocoptArgs *args, bool help, const char *version){
     Command *command;
     Argument *argument;
     Option *option;
@@ -284,21 +279,9 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
         } else if (!strcmp(option->olong, "--input-wav")) {
             if (option->argument)
                 args->input_wav = option->argument;
-        } else if (!strcmp(option->olong, "--n-alpha1")) {
+/*->>>>>} else if (!strcmp(option->olong, "alfa2")) {
             if (option->argument)
-                args->n_alpha1 = option->argument;
-        } else if (!strcmp(option->olong, "--n-alpha2")) {
-            if (option->argument)
-                args->n_alpha2 = option->argument;
-        } else if (!strcmp(option->olong, "--number-init")) {
-            if (option->argument)
-                args->number_init = option->argument;
-        } else if (!strcmp(option->olong, "--number-ms")) {
-            if (option->argument)
-                args->number_ms = option->argument;
-        } else if (!strcmp(option->olong, "--number-mv")) {
-            if (option->argument)
-                args->number_mv = option->argument;
+                args->alfa2 = option->argument;*/
         } else if (!strcmp(option->olong, "--output-vad")) {
             if (option->argument)
                 args->output_vad = option->argument;
@@ -339,11 +322,6 @@ DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
         {NULL, "--version", 0, 0, NULL},
         {"-1", "--alfa1", 1, 0, NULL},
         {"-i", "--input-wav", 1, 0, NULL},
-        {"-a", "--n-alpha1", 1, 0, NULL},
-        {"-b", "--n-alpha2", 1, 0, NULL},
-        {"-N", "--number-init", 1, 0, NULL},
-        {"-s", "--number-ms", 1, 0, NULL},
-        {"-m", "--number-mv", 1, 0, NULL},
         {"-o", "--output-vad", 1, 0, NULL},
         {"-w", "--output-wav", 1, 0, NULL}
     };

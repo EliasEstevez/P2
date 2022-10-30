@@ -26,7 +26,12 @@ int main(int argc, char *argv[]) {
   unsigned int t, last_t; /* in frames */
 
   char	*input_wav, *output_vad, *output_wav;
+<<<<<<< HEAD
   
+=======
+  float alfa1, alfa2;
+  // ->>>>>>INTS int min_voice, min_silence, n_init;
+>>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
 
   DocoptArgs args = docopt(argc, argv, /* help */ 1, /* version */ "2.0");
 
@@ -34,8 +39,13 @@ int main(int argc, char *argv[]) {
   input_wav  = args.input_wav;
   output_vad = args.output_vad;
   output_wav = args.output_wav;
+<<<<<<< HEAD
   float alfa1 = atof(args.alfa1);
   float alfa2=2;
+=======
+  alfa1 = 10;    //atof(args.alfa1);
+  alfa2 = 2 ;   //atof(args.alfa2);
+>>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
 
   if (input_wav == 0 || output_vad == 0) {
     fprintf(stderr, "%s\n", args.usage_pattern);
@@ -67,7 +77,11 @@ int main(int argc, char *argv[]) {
     }
   }
 
+<<<<<<< HEAD
   vad_data = vad_open(sf_info.samplerate, alfa1, alfa2); //mirar si hace falta passarle tantas cosas, creo que con 2 aplhas ya
+=======
+  vad_data = vad_open(sf_info.samplerate, alfa1, alfa2); 
+>>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
   /* Allocate memory for buffers */
   frame_size   = vad_frame_size(vad_data);
   buffer       = (float *) malloc(frame_size * sizeof(float));
@@ -76,7 +90,10 @@ int main(int argc, char *argv[]) {
 
   frame_duration = (float) frame_size/ (float) sf_info.samplerate;
   last_state = ST_UNDEF;
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
 
   for (t = last_t = 0; ; t++) { /* For each frame ... */
     /* End loop when file has finished (or there is an error) */
@@ -84,8 +101,13 @@ int main(int argc, char *argv[]) {
           break;
 
     if (sndfile_out != 0) {
+<<<<<<< HEAD
       /* TODO: copy all the samples into sndfile_out */
       
+=======
+      /* DONE: copy all the samples into sndfile_out */
+      sf_write_float(sndfile_out, buffer, frame_size);
+>>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
     }
 
     state = vad(vad_data, buffer,frame_size);// falta algo aqui
@@ -96,6 +118,7 @@ int main(int argc, char *argv[]) {
     if (state != last_state && state != ST_UNDEF && t != last_t){
       
       fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration, state2str(last_state));
+      
       last_state = state;
       last_t = t;
     }
@@ -108,7 +131,7 @@ int main(int argc, char *argv[]) {
       else{
         n_write=sf_write_float(sndfile_out,buffer,frame_size); 
       }
-      // -> la tengo que poner ?? last_state = state;
+      last_state = state;
     }
   }
 

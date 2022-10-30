@@ -10,7 +10,11 @@ DB=$DIR_P2/db.v4
 CMD="$DIR_P2/bin/vad --alfa1=$1"
 =======
 CMD="$DIR_P2/bin/vad  --alfa1=$1"           #aqui meter en $1 el valor por defecto no?
+<<<<<<< HEAD
 >>>>>>> 6f0b0fbfff56b6249505210491ff263d0252d8f7
+=======
+#CMD="$DIR_P2/bin/vad  --alfa2=$2"
+>>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
 
 for filewav in $DB/*/*wav; do
 #    echo
