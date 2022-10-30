@@ -42,15 +42,7 @@ const char help_message[] =
 "   -i FILE, --input-wav=FILE   WAVE file for voice activity detection\n"
 "   -o FILE, --output-vad=FILE  Label file with the result of VAD\n"
 "   -w FILE, --output-wav=FILE  WAVE file with silences cleared\n"
-<<<<<<< HEAD
-"   -N INT, --number-init=INT  Number of init frames [default: 11]\n"
-"   -s INT, --number-ms=INT  Number of frames in MS [default: 12]\n"
-"   -m INT, --number-mv=INT  Number of frames in MV [default: 5]\n"
-"   -a FLOAT, --n-alpha1=FLOAT  Value of alpha1 [default: 2]\n"
-"   -b FLOAT, --n-alpha2=FLOAT  Value of alpha2 [default: 7.3]\n"
-=======
 "   -1 REAL, --alfa1=REAL  Incremento del umbral 1 [default: 3]\n"
->>>>>>> 0a300a8407aabcb8beab878b9c48fe2df1c1acf5
 "   -v, --verbose  Show debug information\n"
 "   -h, --help     Show this screen\n"
 "   --version      Show the version of the project\n"
@@ -333,12 +325,7 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
 
 DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
     DocoptArgs args = {
-<<<<<<< HEAD
-        0, 0, 0, NULL, (char*) "2", (char*) "7.3", (char*) "11", (char*) "12",
-        (char*) "5", NULL, NULL,
-=======
         0, 0, 0, (char*) "3", NULL, NULL, NULL,
->>>>>>> 0a300a8407aabcb8beab878b9c48fe2df1c1acf5
         usage_pattern, help_message
     };
     Tokens ts;
@@ -360,11 +347,7 @@ DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
         {"-o", "--output-vad", 1, 0, NULL},
         {"-w", "--output-wav", 1, 0, NULL}
     };
-<<<<<<< HEAD
-    Elements elements = {0, 0, 11, commands, arguments, options};
-=======
     Elements elements = {0, 0, 7, commands, arguments, options};
->>>>>>> 0a300a8407aabcb8beab878b9c48fe2df1c1acf5
 
     ts = tokens_new(argc, argv);
     if (parse_args(&ts, &elements))
