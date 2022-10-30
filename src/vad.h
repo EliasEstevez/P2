@@ -16,15 +16,23 @@ typedef struct {
   float sampling_rate;
   unsigned int frame_length;
   float last_feature; /* for debuggin purposes */
+<<<<<<< HEAD
   float k0;
+=======
+>>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
   float k1;
   float k2;
-  float alpha1;
-  float alpha2;
-  unsigned int counter_N; //Contador
-  unsigned int counter_init; //Número máximo de tramas que permaneceremos en estado Init
+  float alfa1;
+  float alfa2;
+  float counter_N;
+  float MAX_MB;
+  float MIN_VOICE;
+  float MIN_SILENCE;
+  float N_TRAMAS;
+  unsigned int counter; //Contador
+  unsigned int max_init; //Número máximo de tramas que permaneceremos en estado Init
   unsigned int counter_ms; //Número de tramas que permaneceremos en Maybe Silence
-  unsigned int counter_mv; //Número de tramas que permaneceremos en Maybe Voice
+  unsigned int counter_mv; //Número de tramas que permaneceremos en Maybe Voice 
 
 } VAD_DATA;
 
@@ -32,7 +40,11 @@ typedef struct {
    It should return allocated and initialized values of vad_data
 
    sampling_rate: ... the sampling rate */
+<<<<<<< HEAD
 VAD_DATA *vad_open(float sampling_rate,int number_init, int number_ms, int number_mv, float n_alpha1, float n_alpha2);
+=======
+VAD_DATA *vad_open(float sampling_rate, float alfa1, float alfa2);
+>>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
 
 /* vad works frame by frame.
    This function returns the frame size so that the program knows how
@@ -47,7 +59,7 @@ unsigned int vad_frame_size(VAD_DATA *);
 
     x: input frame
        It is assumed the length is frame_length */
-VAD_STATE vad(VAD_DATA *vad_data, float *x,float t);
+VAD_STATE vad(VAD_DATA *vad_data, float *x);
 
 /* Free memory
    Returns the state of the last (undecided) states. */
