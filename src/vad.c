@@ -69,7 +69,7 @@ VAD_DATA * vad_open(float rate, float alfa1, float alfa2) {
   vad_data->alfa1 = alfa1;
   vad_data->alfa2 = alfa2;
   vad_data->counter = 0;
-  vad_data->MAX_MB = 5
+  vad_data->MAX_MB = 5;           //Mirar aquestes avriables i buscar "les nostres propies"
   vad_data->MIN_VOICE = 30;
   vad_data->MIN_SILENCE = 10;
   vad_data->N_TRAMAS = 3;
