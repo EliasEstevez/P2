@@ -54,24 +54,12 @@ Features compute_features(const float *x, int N) {
  * TODO: Init the values of vad_data
  */
 
-VAD_DATA * vad_open(float rate, float alfa1,float alpha2, float beta1, float beta2, float gamma, int n_init, int min_voice, int min_silence) {
+VAD_DATA * vad_open(float rate, float alfa1) {
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
   vad_data->alfa1=alfa1;
-  vad_data->alpha2 = alpha2;
-  vad_data->beta1 = beta1;
-  vad_data->beta2 = beta2;
-  vad_data->gamma = gamma;
-  vad_data->min_voice = min_voice;
-  vad_data->min_silence = min_silence;
-  vad_data->esperaS = 0;
-  vad_data->esperaV = 0;
-  vad_data->n_init = n_init;
-  vad_data->frame_counter = 0;
-  vad_data->zcr = 0;
-  return vad_data;
 }
 
 VAD_STATE vad_close(VAD_DATA *vad_data) {
@@ -105,63 +93,20 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
   switch (vad_data->state) {    /*miramos en el estado que estavamos antes*/
   case ST_INIT:
-    //vad_data->state = ST_SILENCE;
-    //vad_data->umbral = f.p + vad_data->alfa1;
-    if (vad_data->frame_counter < vad_data->n_init) {
-                vad_data->k0 += powf(10.0, f.p / 10) / vad_data->n_init;
-                vad_data->zcr += f.zcr / vad_data->n_init;
-                vad_data->frame_counter++;
-
-            } else {
-                vad_data->state = ST_SILENCE;
-                vad_data->k0 = 10*log10f(vad_data->k0);
-                vad_data->k1 = vad_data->k0 + vad_data->alpha1;
-                vad_data->k2 = vad_data->k0 + vad_data->alpha2;
-                vad_data->zcr += vad_data->gamma;
-            }
+    vad_data->state = ST_SILENCE;
+    vad_data->umbral = f.p + vad_data->alfa1;
     break;
 
   case ST_SILENCE:
-    //if (f.p > vad_data->umbral)
-      //vad_data->state = ST_VOICE;
-      if (f.p > vad_data->k2 && f.am > vad_data->beta2) {
-                vad_data->state = ST_MAYBE_VOICE;
-                vad_data->esperaV = 0;
-            } else if (f.p > vad_data->k1 && f.am > vad_data->beta1) {
-                vad_data->state = ST_VOICE;
-            }
+    if (f.p > vad_data->umbral)
+      vad_data->state = ST_VOICE;
     break;
-case ST_MAYBE_VOICE:
-            if (f.p > vad_data->k1 && vad_data->esperaV >= vad_data->min_voice && f.am >= vad_data->beta1) {
-                vad_data->state = ST_VOICE;
-            } else if (f.p < vad_data->k2 && f.am < vad_data->beta2) {
-                vad_data->state = ST_SILENCE;
-            }
-
-            vad_data->esperaV++;
-            break;
 
   case ST_VOICE:
-    //if (f.p < vad_data->umbral)
-      //vad_data->state = ST_SILENCE;
-      if (f.p < vad_data->k2 && f.zcr < vad_data->zcr) {
-                vad_data->state = ST_SILENCE;
-            } else if (f.p < vad_data->k1) {
-                vad_data->state = ST_MAYBE_SILENCE;
-                vad_data->esperaS = 0;
-            }
+    if (f.p < vad_data->umbral)
+      vad_data->state = ST_SILENCE;
     break;
 
-case ST_MAYBE_SILENCE:
-            if (f.p > vad_data->k1 && f.am > vad_data->beta1) {
-                vad_data->state = ST_VOICE;
-            } else if (f.p < vad_data->k2 && vad_data->esperaS >= vad_data->min_silence) {
-                vad_data->state = ST_SILENCE;
-            }
-            
-            vad_data->esperaS++;
-            break;
-            
   case ST_UNDEF:
     break;
   }
