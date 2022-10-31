@@ -71,8 +71,8 @@ VAD_DATA * vad_open(float rate, float alfa1, float alfa2) {
   vad_data->counter = 0;
    vad_data->num_tramas = 3;
   vad_data->MAX_MB = 5;           
-  vad_data->MIN_VOICE = 30;
-  vad_data->MIN_SILENCE = 10;
+  vad_data->MIN_VOICE = 10;
+  vad_data->MIN_SILENCE = 5;
  
 
   return vad_data;

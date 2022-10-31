@@ -36,8 +36,8 @@ int main(int argc, char *argv[]) {
   input_wav  = args.input_wav;
   output_vad = args.output_vad;
   output_wav = args.output_wav;
-  alfa1 = 10;    //atof(args.alfa1); //con esto transformamos el string (pasado como parametro) en un float
-  alfa2 = 2 ;   //atof(args.alfa2);
+  alfa1 = 4;    //atof(args.alfa1); //con esto transformamos el string (pasado como parametro) en un float
+  alfa2 = 3 ;   //atof(args.alfa2);
 
   if (input_wav == 0 || output_vad == 0) {
     fprintf(stderr, "%s\n", args.usage_pattern);
