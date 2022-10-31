@@ -94,24 +94,20 @@ int main(int argc, char *argv[]) {
 
     /* DONE: print only SILENCE and VOICE labels */
     /* As it is, it prints UNDEF segments but is should be merge to the proper value */
-    if (state != last_state){
-      if(t!=last_t)
-      {
+    if (state != last_state && state != ST_UNDEF && t != last_t){
+   
         fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration, state2str(last_state));
-      }
       last_state = state;
       last_t = t;
     }
 
     if (sndfile_out != 0) {
       /* DONE: go back and write zeros in silence segments */
-      if(last_state==ST_SILENCE){ 
-        n_write=sf_write_float(sndfile_out,buffer_zeros,frame_size); 
+      
+      if(state==ST_SILENCE||(last_state==ST_SILENCE&&state==ST_UNDEF)){
+        sf_seek(sndfile_out, -frame_size, SEEK_CUR);
+          sf_write_float(sndfile_out, buffer_zeros, frame_size); /*writing zeros in file*/
       }
-      else{
-        n_write=sf_write_float(sndfile_out,buffer,frame_size); 
-      }
-      last_state = state;
     }
   }
 
