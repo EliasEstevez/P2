@@ -21,17 +21,13 @@ typedef struct {
   float k2;
   float alfa1;
   float alfa2;
-  float counter;
+  float counter_N;
   float num_tramas;
   float MAX_MB;
   float MIN_VOICE;
   float MIN_SILENCE;
-<<<<<<< HEAD
   float N_TRAMAS;
   //unsigned int counter; //Contador
-=======
-  
->>>>>>> d9b15472d3722dbc12bcb9df0c1ee23098513c26
   //unsigned int max_init; //Número máximo de tramas que permaneceremos en estado Init
   //unsigned int counter_ms; //Número de tramas que permaneceremos en Maybe Silence
   //unsigned int counter_mv; //Número de tramas que permaneceremos en Maybe Voice 
