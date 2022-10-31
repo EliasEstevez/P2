@@ -1,4 +1,3 @@
-
 #include <sndfile.h>
 
 project('P2 de PAV Detecció d\'activitat vocal guai','C')
