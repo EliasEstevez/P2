@@ -7,9 +7,9 @@
 
 
 const float FRAME_TIME = 10.0F; /* in ms. */
-unsigned int cnt_mb_voice = 0; /*contador tramas en mb_voice*/
-unsigned int cnt_mb_silence = 0;  /*contador tramas en mb_silence*/
-unsigned int cnt_th_init = 0; /*contador tramas para threshold en init*/
+//unsigned int cnt_mb_voice = 0; /*contador tramas en mb_voice*/
+//unsigned int cnt_mb_silence = 0;  /*contador tramas en mb_silence*/
+//unsigned int cnt_th_init = 0; /*contador tramas para threshold en init*/
 const float fm = 16000;
 
 /* 
@@ -34,7 +34,7 @@ typedef struct {
 } Features;
 
 /* 
- * TODO: Delete and use your own features!
+ * DONE: Delete and use your own features!
  */
 
 Features compute_features(const float *x, int N) {
@@ -59,7 +59,7 @@ Features compute_features(const float *x, int N) {
 }
 
 /* 
- * TODO: Init the values of vad_data
+ * DONE: Init the values of vad_data
  */
 
 VAD_DATA * vad_open(float rate, float alfa1, float alfa2) {  
@@ -67,27 +67,14 @@ VAD_DATA * vad_open(float rate, float alfa1, float alfa2) {
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
-<<<<<<< HEAD
-  //Queremos cambiar la dimension de la ventana
-  vad_data->k0 = 0;
-  vad_data->k1 = 0;
-  vad_data->k2 = 0;
   vad_data->alfa1 = alfa1;
   vad_data->alfa2 = alfa2;
   vad_data->counter_N = 0;
-  vad_data->counter_init = number_init;
-  vad_data->counter_ms = number_ms;
-  vad_data->counter_mv = number_mv;
-=======
-  vad_data->alfa1 = alfa1;
-  vad_data->alfa2 = alfa2;
-  vad_data->counter = 0;
   vad_data->MAX_MB = 5;           //Mirar aquestes avriables i buscar "les nostres propies"
   vad_data->MIN_VOICE = 30;
   vad_data->MIN_SILENCE = 10;
   vad_data->N_TRAMAS = 3;
 
->>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
   return vad_data;
 }
 
@@ -122,22 +109,9 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   switch (vad_data->state) {
   case ST_INIT: 
   
-<<<<<<< HEAD
-  if(vad_data->counter_N < vad_data->counter_init){
-      vad_data->counter_N ++;
-      vad_data->k0 += pow(10, f.p/10);
-
-    }else{
-      vad_data->state = ST_SILENCE;
-      vad_data->k0 = 10*log10(vad_data->k0/vad_data->counter_N);
-      vad_data->k1 = vad_data->k0 + vad_data->alfa1;
-      vad_data->k2 = vad_data->k1 + vad_data->alfa2;
-      vad_data->counter_N = 0;
-=======
     vad_data->k1  = f.p + vad_data->alfa1-0.5;  // -0.45
     vad_data->k2  = f.p + vad_data->alfa2 +7.61;  // +7.5
     vad_data->state = ST_SILENCE;
->>>>>>> bd57dca0aec8fdda36bf5f8ba015ed0ee61e3ed0
 
       /*
       printf("El nivel k0 es %f\n", vad_data->k0);
@@ -149,68 +123,76 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
       printf("El valor de alpha1 introducido es: %f\n", vad_data->alpha1);
       printf("El valor de alpha2 introducido es: %f\n", vad_data->alpha2);
       */
-    }
+    
     break;
 
   case ST_SILENCE:
-    //printf("ZCR en S: %f\n", f.zcr);
-    if (f.p > vad_data->k1){
+    printf("ZCR en S: %f\n", f.zcr);
+    if (f.p > vad_data->k2){
       vad_data->state = ST_MV;
-      //printf("De S me voy a MV\n");
+      printf("De S me voy a MV\n");
+    }else if(f.p > vad_data->k1){
+      vad_data->N_TRAMAS --;
+      vad_data->state = ST_MS;
+      rintf("De S me voy a MS\n")
+      
     }
     break;
 
   case ST_VOICE:
-    //printf("ZCR en V: %f\n", f.zcr);
-    if (f.p < vad_data->k2){
+    printf("ZCR en V: %f\n", f.zcr);
+    if (f.p < vad_data->k1){
       vad_data->state = ST_MS;
-      //printf("De V me voy a MS\n");
+      printf("De V me voy a MS\n");
+    }else if(f.p < vad_data->k2){
+      vad_data->state = ST_MV;
+      rintf("De V me voy a MV\n")
     }
     break;
 
     case ST_MV:
-    //printf("Llevo %u tramas en MV\n", vad_data->counter_N);
-    //printf("ZCR en MV: %f\n", f.zcr);
-    if(f.p > vad_data->k2 && vad_data->counter_N < vad_data->counter_mv){
+    printf("Llevo %u tramas en MV\n", vad_data->counter_N);
+    printf("ZCR en MV: %f\n", f.zcr);
+    if(f.p > vad_data->k2 ){
       vad_data->state = ST_VOICE;
-      vad_data->counter_N = 0;
-      //printf("De MV me voy a V\n");
-    }else if(vad_data->counter_N == vad_data->counter_mv){
-      //printf("He llegado al máximo de MV\n");
+      printf("De MV me voy a V\n");
+    }else if(f.p < vad_data->k1 ||vad_data->N_TRAMAS==0){
+      printf("He llegado al máximo de MV\n");
       vad_data->state = ST_SILENCE;
-      vad_data->counter_N = 0;
-      //printf("De MV me voy a S\n");
+      vad_data->N_TRAMAS= 3;
+      printf("De MV me voy a S\n");
     }else{
-      vad_data->counter_N ++;
-      //printf("Sigo MV\n");
+      vad_data->N_TRAMAS--;
+      printf("Sigo MV\n");
     }
     break;
 
   case ST_MS:
-    //printf("Llevo %u tramas en MS\n", vad_data->counter_N);
-    //printf("ZCR en MS: %f\n", f.zcr);
-    if(f.p > vad_data->k2 && vad_data->counter_N < vad_data->counter_ms){
+    printf("Llevo %u tramas en MS\n", vad_data->counter_N);
+    printf("ZCR en MS: %f\n", f.zcr);
+    if(f.p > vad_data->k2 ||vad_data->N_TRAMAS==0){
       vad_data->state = ST_VOICE;
-      vad_data->counter_N = 0;
-      //printf("De MS me voy a V\n");
-    }else if(vad_data->counter_N == vad_data->counter_ms){
-      //printf("He llegado al máximo de MS\n");
+      vad_data->N_TRAMAS = 3;
+      printf("De MS me voy a V\n");
+    }else if(f.p < vad_data->k1){
+      printf("He llegado al máximo de MS\n");
       vad_data->state = ST_SILENCE;
-      vad_data->counter_N = 0;
-      //printf("De MS me voy a S\n");
+      printf("De MS me voy a S\n");
     }else {
-      vad_data->counter_N ++;
-      //printf("Sigo MS\n");
+      vad_data->N_TRAMAS--;
+      printf("Sigo MS\n");
     }
     break;
 
   case ST_UNDEF:
+    printf("Hem entrat a undef")
     break;
   }
 
-  if (vad_data->state == ST_SILENCE ||
-      vad_data->state == ST_VOICE)
-    return vad_data->state;
+  if (vad_data->state == ST_SILENCE ||vad_data->state == ST_MV)
+    return ST_SILENCE;
+  else if (vad_data->state == ST_VOICE ||vad_data->state == ST_MS)
+    return ST_VOICE;
   else
     return ST_UNDEF;
 }
