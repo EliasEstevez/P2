@@ -16,9 +16,9 @@ typedef struct {
     int verbose;
     int version;
     /* options with arguments */
-    char *alfa1;
+    //char *alfa1; //ampliación
+    //char *alfa2 // ampliación
     char *input_wav;
-    //->>>>>>>>>>>>>>>char *alfa2;
     char *output_vad;
     char *output_wav;
     /* special */
@@ -273,12 +273,13 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help, const char *v
             args->verbose = option->value;
         } else if (!strcmp(option->olong, "--version")) {
             args->version = option->value;
-        } else if (!strcmp(option->olong, "--alfa1")) {
-            if (option->argument)
-                args->alfa1 = option->argument;
+       
         } else if (!strcmp(option->olong, "--input-wav")) {
             if (option->argument)
                 args->input_wav = option->argument;
+                 /*} else if (!strcmp(option->olong, "--alfa1")) {
+if (option->argument)
+args->alfa1 = option->argument;*///ampliación
 /*->>>>>} else if (!strcmp(option->olong, "alfa2")) {
             if (option->argument)
                 args->alfa2 = option->argument;*/
@@ -306,7 +307,7 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help, const char *v
  * Main docopt function
  */
 
-DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
+DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) { 
     DocoptArgs args = {
         0, 0, 0, (char*) "3", NULL, NULL, NULL,
         usage_pattern, help_message
