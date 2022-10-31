@@ -69,11 +69,17 @@ VAD_DATA * vad_open(float rate, float alfa1, float alfa2) {
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
   vad_data->alfa1 = alfa1;
   vad_data->alfa2 = alfa2;
+<<<<<<< HEAD
   vad_data->counter_N = 0;
   vad_data->MAX_MB = 5;           //Mirar aquestes avriables i buscar "les nostres propies"
+=======
+  vad_data->counter = 0;
+   vad_data->num_tramas = 3;
+  vad_data->MAX_MB = 5;           
+>>>>>>> d9b15472d3722dbc12bcb9df0c1ee23098513c26
   vad_data->MIN_VOICE = 30;
   vad_data->MIN_SILENCE = 10;
-  vad_data->N_TRAMAS = 3;
+ 
 
   return vad_data;
 }
@@ -114,15 +120,13 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     vad_data->state = ST_SILENCE;
 
       /*
-      printf("El nivel k0 es %f\n", vad_data->k0);
+      /Chivatos para comprobar los valores 
       printf("El nivel k1 es %f\n", vad_data->k1);
       printf("El nivel k2 es %f\n", vad_data->k2);
-      printf("El valor de number_init introducido es: %d\n", vad_data->counter_init);
-      printf("El valor de number_ms introducido es: %d\n", vad_data->counter_ms);
-      printf("El valor de number_mv introducido es: %d\n", vad_data->counter_mv);
-      printf("El valor de alpha1 introducido es: %f\n", vad_data->alpha1);
-      printf("El valor de alpha2 introducido es: %f\n", vad_data->alpha2);
+      printf("El valor de alpha1 introducido es: %f\n", vad_data->alfa1);
+      printf("El valor de alpha2 introducido es: %f\n", vad_data->alfa2);
       */
+<<<<<<< HEAD
     
     break;
 
@@ -147,10 +151,41 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     }else if(f.p < vad_data->k2){
       vad_data->state = ST_MV;
       rintf("De V me voy a MV\n")
+=======
+
+    break;
+
+  case ST_SILENCE:
+    //printf("ZCR en S: %f\n", f.zcr);
+    if (f.p > vad_data->k2){
+
+      vad_data->state = ST_MV;}
+    
+      else if(f.p > vad_data->k1){
+
+          vad_data-> state=ST_MS;
+
+      }
+
+    break;
+
+  case ST_VOICE:
+  
+    if (f.p < vad_data->k2){
+
+      vad_data->state = ST_MS;
+>>>>>>> d9b15472d3722dbc12bcb9df0c1ee23098513c26
     }
+else if(f.p>vad_data->k2){
+
+  vad_data ->num_tramas--;
+  vad_data->state= ST_MS;
+
+}
     break;
 
     case ST_MV:
+<<<<<<< HEAD
     printf("Llevo %u tramas en MV\n", vad_data->counter_N);
     printf("ZCR en MV: %f\n", f.zcr);
     if(f.p > vad_data->k2 ){
@@ -164,10 +199,24 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     }else{
       vad_data->N_TRAMAS--;
       printf("Sigo MV\n");
+=======
+   
+    if(f.p > vad_data->k2){
+      vad_data->state = ST_VOICE;
+
+    } else if((f.p< vad_data->k1)||(vad_data -> num_tramas==0)){
+      //printf("He llegado al máximo de MV\n");
+      vad_data->state = ST_SILENCE;
+      vad_data->num_tramas = 3;
+      //printf("De MV me voy a S\n");
+    } else{
+      vad_data->num_tramas--;
+>>>>>>> d9b15472d3722dbc12bcb9df0c1ee23098513c26
     }
     break;
 
   case ST_MS:
+<<<<<<< HEAD
     printf("Llevo %u tramas en MS\n", vad_data->counter_N);
     printf("ZCR en MS: %f\n", f.zcr);
     if(f.p > vad_data->k2 ||vad_data->N_TRAMAS==0){
@@ -181,6 +230,21 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     }else {
       vad_data->N_TRAMAS--;
       printf("Sigo MS\n");
+=======
+    
+    if((f.p > vad_data->k2)||(vad_data->num_tramas==0)){
+      vad_data->state = ST_VOICE;
+      vad_data->num_tramas=3;
+
+    }else if(f.p< vad_data->k1){
+
+      vad_data->state = ST_SILENCE;
+      
+    }else {
+
+  vad_data->state=ST_SILENCE;
+    
+>>>>>>> d9b15472d3722dbc12bcb9df0c1ee23098513c26
     }
     break;
 
@@ -189,9 +253,17 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     break;
   }
 
+<<<<<<< HEAD
   if (vad_data->state == ST_SILENCE ||vad_data->state == ST_MV)
     return ST_SILENCE;
   else if (vad_data->state == ST_VOICE ||vad_data->state == ST_MS)
+=======
+  if (vad_data->state == ST_SILENCE ||
+      vad_data->state == ST_MV)
+    return ST_SILENCE;
+    else if(vad_data->state == ST_VOICE ||
+      vad_data->state == ST_MS)
+>>>>>>> d9b15472d3722dbc12bcb9df0c1ee23098513c26
     return ST_VOICE;
   else
     return ST_UNDEF;

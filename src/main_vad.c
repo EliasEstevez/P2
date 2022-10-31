@@ -26,7 +26,8 @@ int main(int argc, char *argv[]) {
   unsigned int t, last_t; /* in frames */
 
   char	*input_wav, *output_vad, *output_wav;
-  float alfa1, alfa2;
+  
+  float alfa1, alfa2;//lindares
   // ->>>>>>INTS int min_voice, min_silence, n_init;
 
   DocoptArgs args = docopt(argc, argv, /* help */ 1, /* version */ "2.0");
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]) {
   input_wav  = args.input_wav;
   output_vad = args.output_vad;
   output_wav = args.output_wav;
-  alfa1 = 10;    //atof(args.alfa1);
+  alfa1 = 10;    //atof(args.alfa1); //con esto transformamos el string (pasado como parametro) en un float
   alfa2 = 2 ;   //atof(args.alfa2);
 
   if (input_wav == 0 || output_vad == 0) {
@@ -78,9 +79,9 @@ int main(int argc, char *argv[]) {
   frame_duration = (float) frame_size/ (float) sf_info.samplerate;
   last_state = ST_UNDEF;
 
-  for (t = last_t = 0; ; t++) { /* For each frame ... */
+  for (t = last_t = 0; ; t++) {  /* For each frame ... */
     /* End loop when file has finished (or there is an error) */
-    if  ((n_read = sf_read_float(sndfile_in, buffer, frame_size)) != frame_size) 
+    if  ((n_read = sf_read_float(sndfile_in, buffer, frame_size)) != frame_size) //comprobación que cada trozo de señal tenga el número de frames esperados 
           break;
 
     if (sndfile_out != 0) {
@@ -93,10 +94,11 @@ int main(int argc, char *argv[]) {
 
     /* DONE: print only SILENCE and VOICE labels */
     /* As it is, it prints UNDEF segments but is should be merge to the proper value */
-    if (state != last_state && state != ST_UNDEF && t != last_t){
-      
-      fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration, state2str(last_state));
-      
+    if (state != last_state){
+      if(t!=last_t)
+      {
+        fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration, state2str(last_state));
+      }
       last_state = state;
       last_t = t;
     }

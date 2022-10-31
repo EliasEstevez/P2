@@ -1,3 +1,5 @@
+#include <sndfile.h>
+
 project('P2 de PAV Detecció d\'activitat vocal guai','C')
 
 
@@ -6,4 +8,3 @@ src=['src/main_vad.c','src/vad.c','src/pav_analysis.c']
 lib = ['-lm','-lsndfile']
 
 executable(exe,sources:src,link_args:lib)
-
