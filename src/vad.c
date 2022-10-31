@@ -9,7 +9,7 @@ const float FRAME_TIME = 10.0F; /* in ms. */
 //unsigned int cnt_mb_voice = 0; /*contador tramas en mb_voice*/
 //unsigned int cnt_mb_silence = 0;  /*contador tramas en mb_silence*/
 //unsigned int cnt_th_init = 0; /*contador tramas para threshold en init*/
-//const float fm = 16000;
+const float fm = 16000;
 
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
@@ -129,9 +129,9 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
       vad_data->state = ST_MV;}
     
-      else of(f.p > vad_data->k1){
+      else if(f.p > vad_data->k1){
 
-          vad_data-> state=ST_MS
+          vad_data-> state=ST_MS;
 
       }
 
