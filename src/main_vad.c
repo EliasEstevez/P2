@@ -104,17 +104,20 @@ int main(int argc, char *argv[]) {
     if (sndfile_out != 0) {
       /* DONE: go back and write zeros in silence segments */
       
-      if(state==ST_SILENCE||(last_state==ST_SILENCE&&state==ST_UNDEF)){
-        sf_seek(sndfile_out, -frame_size, SEEK_CUR);
-          sf_write_float(sndfile_out, buffer_zeros, frame_size); /*writing zeros in file*/
+      if(last_state==ST_SILENCE){ 
+        n_write=sf_write_float(sndfile_out,buffer_zeros,frame_size); 
       }
+      else{
+        n_write=sf_write_float(sndfile_out,buffer,frame_size); 
+      }
+      last_state = state;
     }
   }
 
   state = vad_close(vad_data);
   /* DONE: what do you want to print, for last frames? */
   if (t != last_t)
-    fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration + n_read / (float) sf_info.samplerate, state2str(state));
+    fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration + n_read / (float) sf_info.samplerate, state2str(last_state));
 
   /* clean up: free memory, close open files */
   free(buffer);
