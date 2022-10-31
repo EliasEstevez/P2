@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 /* TODO: add the needed states */
-typedef enum {ST_UNDEF=0, ST_SILENCE, ST_VOICE, ST_INIT, ST_MS, ST_MV} VAD_STATE;
+typedef enum {ST_UNDEF=0, ST_SILENCE, ST_VOICE, ST_INIT, ST_MB_SILENCE,ST_MB_VOICE} VAD_STATE;
 
 /* Return a string label associated to each state */
 const char *state2str(VAD_STATE st);
@@ -12,24 +12,13 @@ const char *state2str(VAD_STATE st);
    (counts, thresholds, etc.) */
 
 typedef struct {
- VAD_STATE state;
+  VAD_STATE state;
   float sampling_rate;
-  unsigned int frame_length;
+  unsigned int frame_length, k0, k1, nStableInit, nStableVoice, nStableSilence;
   float last_feature; /* for debuggin purposes */
-  float k0;
-  float k1;
-  float k2;
-  float alfa1;
-  float alfa2;
-  float counter;
-  float num_tramas;
-  float MAX_MB;
-  float MIN_VOICE;
-  float MIN_SILENCE;
-  
-  //unsigned int max_init; //Número máximo de tramas que permaneceremos en estado Init
-  //unsigned int counter_ms; //Número de tramas que permaneceremos en Maybe Silence
-  //unsigned int counter_mv; //Número de tramas que permaneceremos en Maybe Voice 
+  float p1;
+  float alpha1;
+  float pPot;
 
 } VAD_DATA;
 
@@ -37,7 +26,7 @@ typedef struct {
    It should return allocated and initialized values of vad_data
 
    sampling_rate: ... the sampling rate */
-VAD_DATA *vad_open(float sampling_rate, float alfa1, float alfa2);
+VAD_DATA *vad_open(float sampling_rate, float alpha1);
 
 /* vad works frame by frame.
    This function returns the frame size so that the program knows how
