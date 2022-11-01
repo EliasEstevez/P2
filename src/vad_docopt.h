@@ -306,7 +306,7 @@ DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
     DocoptArgs args = {
         0, 0, 0, (char*) "10", NULL, NULL, NULL,
         usage_pattern, help_message
-    };
+    }; //Ponemos por defecto alfa1=10
     Tokens ts;
     Command commands[] = {
     };

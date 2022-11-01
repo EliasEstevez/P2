@@ -67,10 +67,10 @@ VAD_DATA * vad_open(float rate, float alfa1) {
   vad_data->alfa1=alfa1;
   vad_data->k0 = 5; 
   vad_data->k1 = 5;
-  vad_data->trigger_INIT = 0.989; //marcamos el trigger
-  vad_data->NumInitStable = 7; 
+  vad_data->trigger_INIT = 0.99; //marcamos el trigger 0.989
+  vad_data->NumInitStable = 5; 
   vad_data->NumVoiceStable = 0;
-  vad_data->NumSilenceStable = 9; 
+  vad_data->NumSilenceStable = 8; 
 
   return vad_data;
 }
