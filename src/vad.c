@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "vad.h"
 #include "pav_analysis.h"
+#include "vad.h"
 
 const float FRAME_TIME = 10.0F; /* in ms. */
-//unsigned int cnt_mb_voice = 0; /*contador tramas en mb_voice*/
-//unsigned int cnt_mb_silence = 0;  /*contador tramas en mb_silence*/
-//unsigned int cnt_th_init = 0; /*contador tramas para threshold en init*/
+unsigned int cnt_mb_voice = 0; /*contador tramas en mb_voice*/
+unsigned int cnt_mb_silence = 0;  /*contador tramas en mb_silence*/
+unsigned int cnt_th_init = 0; /*contador tramas para threshold en init*/
+float accum_power = 0; /*variable que acumula potencia del inicio*/
 const float fm = 16000;
-
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
  * only this labels are needed. You need to add all labels, in case
@@ -47,42 +47,39 @@ Features compute_features(const float *x, int N) {
    * For the moment, compute random value between 0 and 1 
    */
   Features feat;
-  //Utilizando las funciones de analysis.c podemos obtener los parametros deseados
-  //para asi poder marcar lindares que nos dara informacion de en que situación nos encontramos
-  feat.zcr=compute_zcr(x,N,fm); 
-  feat.p=compute_power(x,N);
-  feat.am=compute_am(x,N);
+  feat.zcr = compute_zcr(x, N, fm);
+  feat.p=compute_power(x, N);
+  feat.am=compute_am(x, N);
 
   return feat;
-  
 }
 
 /* 
- * TODO: Init the values of vad_data
+ * DONE: Init the values of vad_data
  */
 
-VAD_DATA * vad_open(float rate, float alfa1, float alfa2) {  
+VAD_DATA * vad_open(float rate, float alpha1) {
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
-  vad_data->alfa1 = alfa1;
-  vad_data->alfa2 = alfa2;
-  vad_data->counter = 0;
-   vad_data->num_tramas = 3;
-  vad_data->MAX_MB = 5;           
-  vad_data->MIN_VOICE = 10;
-  vad_data->MIN_SILENCE = 5;
- 
+  vad_data->alpha1=alpha1;
+  vad_data->k0 = 5; 
+  vad_data->k1 = 5;
+  vad_data->pPot = 0.989; /*trigger in percent in INIT state to detect voice*/ //0.989
+  /*minimum number of stable frames*/
+  vad_data->nStableInit = 7; //7
+  vad_data->nStableVoice = 0;
+  vad_data->nStableSilence = 9; //9
 
   return vad_data;
 }
 
 VAD_STATE vad_close(VAD_DATA *vad_data) {
   /* 
-   * DONE: decide what to do with the last undecided frames
+   * TODO: decide what to do with the last undecided frames
    */
-  VAD_STATE state = vad_data->state;  //-->>>mirar si acaba con le anterior o siempre com silencio
+  VAD_STATE state = ST_SILENCE; 
   free(vad_data);
   return state;
 }
@@ -92,14 +89,14 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
 }
 
 /* 
- * TODO: Implement the Voice Activity Detection 
+ * DONE: Implement the Voice Activity Detection 
  * using a Finite State Automata
  */
 
 VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
   /* 
-   * TODO: You can change this, using your own features,
+   * DONE: You can change this, using your own features,
    * program finite state automaton, define conditions, etc.
    */
 
@@ -107,92 +104,59 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
   switch (vad_data->state) {
-  case ST_INIT: 
-  
-    vad_data->k1  = f.p + vad_data->alfa1-0.5;  // -0.45
-    vad_data->k2  = f.p + vad_data->alfa2 +7.61;  // +7.5
-    vad_data->state = ST_SILENCE;
+  case ST_INIT:
+    accum_power = f.p + accum_power;
+    cnt_th_init++;
+    if(f.p >= (vad_data->pPot)*(accum_power/cnt_th_init) && (vad_data->nStableInit < cnt_th_init)){ //pPot - nStableInit
+      vad_data-> p1 = (accum_power/cnt_th_init) + vad_data->k0;   //k0
+      vad_data->state = ST_SILENCE; 
+      cnt_th_init = 0;
+    }
+    break;
 
-      /*
-      /Chivatos para comprobar los valores 
-      printf("El nivel k1 es %f\n", vad_data->k1);
-      printf("El nivel k2 es %f\n", vad_data->k2);
-      printf("El valor de alpha1 introducido es: %f\n", vad_data->alfa1);
-      printf("El valor de alpha2 introducido es: %f\n", vad_data->alfa2);
-      */
+  case ST_MB_VOICE:
+    if (f.p >= vad_data->p1 + vad_data->k1){ //k1 - nStableVoice
+      if(cnt_mb_voice >= vad_data->nStableVoice){
+        vad_data->state = ST_VOICE;
+        cnt_mb_voice = 0;
+      }else{
+        cnt_mb_voice++;
+      }
+    }else
+     vad_data->state = ST_SILENCE;
 
     break;
 
-  case ST_SILENCE:
-    //printf("ZCR en S: %f\n", f.zcr);
-    if (f.p > vad_data->k2){
-
-      vad_data->state = ST_MV;}
-    
-      else if(f.p > vad_data->k1){
-
-          vad_data-> state=ST_MS;
-
+  case ST_MB_SILENCE:
+    if (f.p <= vad_data->p1){ //nStableSilence
+      if(cnt_mb_silence >= vad_data->nStableSilence){
+      vad_data->state = ST_SILENCE;
+      cnt_mb_silence = 0;
+      }else{
+        cnt_mb_silence++;
       }
+    }else if(f.p > vad_data->p1)
+      vad_data->state = ST_VOICE;
+    break;
+
+  case ST_SILENCE:
+    if (f.p > vad_data->p1)
+      vad_data->state = ST_MB_VOICE;
 
     break;
 
   case ST_VOICE:
-  
-    if (f.p < vad_data->k2){
-
-      vad_data->state = ST_MS;
-    }
-else if(f.p>vad_data->k2){
-
-  vad_data ->num_tramas--;
-  vad_data->state= ST_MS;
-
-}
-    break;
-
-    case ST_MV:
-   
-    if(f.p > vad_data->k2){
-      vad_data->state = ST_VOICE;
-
-    } else if((f.p< vad_data->k1)||(vad_data -> num_tramas==0)){
-      //printf("He llegado al máximo de MV\n");
-      vad_data->state = ST_SILENCE;
-      vad_data->num_tramas = 3;
-      //printf("De MV me voy a S\n");
-    } else{
-      vad_data->num_tramas--;
-    }
-    break;
-
-  case ST_MS:
-    
-    if((f.p > vad_data->k2)||(vad_data->num_tramas==0)){
-      vad_data->state = ST_VOICE;
-      vad_data->num_tramas=3;
-
-    }else if(f.p< vad_data->k1){
-
-      vad_data->state = ST_SILENCE;
-      
-    }else {
-
-  vad_data->state=ST_SILENCE;
-    
-    }
+    if (f.p < vad_data->p1)
+      vad_data->state = ST_MB_SILENCE;
     break;
 
   case ST_UNDEF:
     break;
+
   }
 
-  if (vad_data->state == ST_SILENCE ||
-      vad_data->state == ST_MV)
-    return ST_SILENCE;
-    else if(vad_data->state == ST_VOICE ||
-      vad_data->state == ST_MS)
-    return ST_VOICE;
+  if (vad_data->state == ST_SILENCE ||vad_data->state == ST_VOICE)
+    return vad_data->state;
   else
     return ST_UNDEF;
 }

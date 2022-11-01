@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sndfile.h>
-#include "pav_analysis.h"
+
 #include "vad.h"
 #include "vad_docopt.h"
 
@@ -15,7 +15,6 @@ int main(int argc, char *argv[]) {
   SF_INFO sf_info;
   FILE *vadfile;
   int n_read = 0, i;
-  int n_write = 0;
 
   VAD_DATA *vad_data;
   VAD_STATE state, last_state;
@@ -23,12 +22,9 @@ int main(int argc, char *argv[]) {
   float *buffer, *buffer_zeros;
   int frame_size;         /* in samples */
   float frame_duration;   /* in seconds */
-  unsigned int t, last_t; /* in frames */
+  unsigned int t, last_t ; /* in frames */
 
   char	*input_wav, *output_vad, *output_wav;
-  
-  float alfa1, alfa2;//lindares
-  // ->>>>>>INTS int min_voice, min_silence, n_init;
 
   DocoptArgs args = docopt(argc, argv, /* help */ 1, /* version */ "2.0");
 
@@ -36,8 +32,7 @@ int main(int argc, char *argv[]) {
   input_wav  = args.input_wav;
   output_vad = args.output_vad;
   output_wav = args.output_wav;
-  alfa1 = 4;    //atof(args.alfa1); //con esto transformamos el string (pasado como parametro) en un float
-  alfa2 = 3 ;   //atof(args.alfa2);
+  float alpha1 = atof(args.alpha1);
 
   if (input_wav == 0 || output_vad == 0) {
     fprintf(stderr, "%s\n", args.usage_pattern);
@@ -69,7 +64,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  vad_data = vad_open(sf_info.samplerate, alfa1, alfa2); 
+  vad_data = vad_open(sf_info.samplerate, alpha1);
   /* Allocate memory for buffers */
   frame_size   = vad_frame_size(vad_data);
   buffer       = (float *) malloc(frame_size * sizeof(float));
@@ -77,12 +72,11 @@ int main(int argc, char *argv[]) {
   for (i=0; i< frame_size; ++i) buffer_zeros[i] = 0.0F;
 
   frame_duration = (float) frame_size/ (float) sf_info.samplerate;
-  last_state = ST_UNDEF;
+  last_state = ST_SILENCE; //File starts with silence
 
-  for (t = last_t = 0; ; t++) {  /* For each frame ... */
+  for (t = last_t = 0; ; t++) { /* For each frame ... */
     /* End loop when file has finished (or there is an error) */
-    if  ((n_read = sf_read_float(sndfile_in, buffer, frame_size)) != frame_size) //comprobación que cada trozo de señal tenga el número de frames esperados 
-          break;
+    if  ((n_read = sf_read_float(sndfile_in, buffer, frame_size)) != frame_size) break;
 
     if (sndfile_out != 0) {
       /* DONE: copy all the samples into sndfile_out */
@@ -94,31 +88,27 @@ int main(int argc, char *argv[]) {
 
     /* DONE: print only SILENCE and VOICE labels */
     /* As it is, it prints UNDEF segments but is should be merge to the proper value */
-    if (state != last_state && state != ST_UNDEF && t != last_t){
-   
-        fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration, state2str(last_state));
+    if (state != last_state && state != ST_UNDEF && t != last_t) {
+      fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration, state2str(last_state));
+            
       last_state = state;
       last_t = t;
     }
 
-    if (sndfile_out != 0) {
+    if (sndfile_out != 0) { 
       /* DONE: go back and write zeros in silence segments */
-      
-      if(last_state==ST_SILENCE){ 
-        n_write=sf_write_float(sndfile_out,buffer_zeros,frame_size); 
+      if(state==ST_SILENCE||(last_state==ST_SILENCE&&state==ST_UNDEF)){
+        sf_seek(sndfile_out, -frame_size, SEEK_CUR);
+          sf_write_float(sndfile_out, buffer_zeros, frame_size); /*writing zeros in file*/
       }
-      else{
-        n_write=sf_write_float(sndfile_out,buffer,frame_size); 
-      }
-      last_state = state;
     }
   }
 
   state = vad_close(vad_data);
   /* DONE: what do you want to print, for last frames? */
-  if (t != last_t)
-    fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration + n_read / (float) sf_info.samplerate, state2str(last_state));
-
+  if (t != last_t){
+    fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration + n_read / (float) sf_info.samplerate, state2str(state));
+  }
   /* clean up: free memory, close open files */
   free(buffer);
   free(buffer_zeros);
