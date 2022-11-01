@@ -16,27 +16,24 @@ typedef struct {
   float sampling_rate;
   unsigned int frame_length, k0, k1, nStableInit, nStableVoice, nStableSilence;
   float last_feature; /* for debuggin purposes */
-<<<<<<< HEAD
-  float k0;
-  float k1;
-  float k2;
-  float alfa1;
-  float alfa2;
-  float counter_N;
-  float num_tramas;
-  float MAX_MB;
-  float MIN_VOICE;
-  float MIN_SILENCE;
-  float N_TRAMAS;
+  //float k0;
+  //float k1;
+  //float k2;
+  //float alfa1;
+  //float alfa2;
+  //float counter_N;
+  //float num_tramas;
+  //float MAX_MB;
+  //float MIN_VOICE;
+  //float MIN_SILENCE;
+  //float N_TRAMAS;
   //unsigned int counter; //Contador
   //unsigned int max_init; //Número máximo de tramas que permaneceremos en estado Init
   //unsigned int counter_ms; //Número de tramas que permaneceremos en Maybe Silence
   //unsigned int counter_mv; //Número de tramas que permaneceremos en Maybe Voice 
-=======
   float p1;
   float alpha1;
   float pPot;
->>>>>>> cbdca300fa0ea34e3c621666355425a667c0f199
 
 } VAD_DATA;
 

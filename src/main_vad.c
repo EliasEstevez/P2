@@ -108,11 +108,7 @@ int main(int argc, char *argv[]) {
   /* DONE: what do you want to print, for last frames? */
   if (t != last_t){
     fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration + n_read / (float) sf_info.samplerate, state2str(state));
-<<<<<<< HEAD
-  
-=======
   }
->>>>>>> cbdca300fa0ea34e3c621666355425a667c0f199
   /* clean up: free memory, close open files */
   free(buffer);
   free(buffer_zeros);

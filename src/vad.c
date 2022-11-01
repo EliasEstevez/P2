@@ -1,12 +1,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
-<<<<<<< HEAD
 #include "pav_analysis.h"
 #include "vad.h"
-=======
-
->>>>>>> cbdca300fa0ea34e3c621666355425a667c0f199
 #include "pav_analysis.h"
 #include "vad.h"
 
@@ -69,7 +65,7 @@ VAD_DATA * vad_open(float rate, float alpha1) {
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
-<<<<<<< HEAD
+/*<<<<<<< HEAD
   vad_data->alfa1 = alfa1;
   vad_data->alfa2 = alfa2;
   vad_data->counter_N = 0;
@@ -77,7 +73,7 @@ VAD_DATA * vad_open(float rate, float alpha1) {
   vad_data->MIN_VOICE = 30;
   vad_data->MIN_SILENCE = 10;
  
-=======
+=======*/
   vad_data->alpha1=alpha1;
   vad_data->k0 = 5; 
   vad_data->k1 = 5;
@@ -86,7 +82,6 @@ VAD_DATA * vad_open(float rate, float alpha1) {
   vad_data->nStableInit = 7; //7
   vad_data->nStableVoice = 0;
   vad_data->nStableSilence = 9; //9
->>>>>>> cbdca300fa0ea34e3c621666355425a667c0f199
 
   return vad_data;
 }
@@ -120,7 +115,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
   switch (vad_data->state) {
-<<<<<<< HEAD
+/*<<<<<<< HEAD
   case ST_INIT: 
   
     vad_data->k1  = f.p + vad_data->alfa1-0.5;  // -0.45
@@ -133,7 +128,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
       printf("El nivel k2 es %f\n", vad_data->k2);
       printf("El valor de alpha1 introducido es: %f\n", vad_data->alfa1);
       printf("El valor de alpha2 introducido es: %f\n", vad_data->alfa2);
-      */
+      
     
     break;
 
@@ -193,7 +188,7 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
       vad_data->N_TRAMAS--;
       printf("Sigo MS\n");
     }
-=======
+=======*/
   case ST_INIT:
     accum_power = f.p + accum_power;
     cnt_th_init++;
@@ -238,7 +233,6 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   case ST_VOICE:
     if (f.p < vad_data->p1)
       vad_data->state = ST_MB_SILENCE;
->>>>>>> cbdca300fa0ea34e3c621666355425a667c0f199
     break;
 
   case ST_UNDEF:
@@ -247,15 +241,14 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
   }
 
-<<<<<<< HEAD
+/*<<<<<<< HEAD
   if (vad_data->state == ST_SILENCE ||vad_data->state == ST_MV)
     return ST_SILENCE;
   else if (vad_data->state == ST_VOICE ||vad_data->state == ST_MS)
     return ST_VOICE;
-=======
+=======*/
   if (vad_data->state == ST_SILENCE ||vad_data->state == ST_VOICE)
     return vad_data->state;
->>>>>>> cbdca300fa0ea34e3c621666355425a667c0f199
   else
     return ST_UNDEF;
 }
