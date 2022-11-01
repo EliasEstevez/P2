@@ -8,11 +8,11 @@
 
 
 const float FRAME_TIME = 10.0F; /* in ms. */
-unsigned int cnt_mb_voice = 0; /*contador tramas en mb_voice*/
-unsigned int cnt_mb_silence = 0;  /*contador tramas en mb_silence*/
-unsigned int cnt_th_init = 0; /*contador tramas para threshold en init*/
-float accum_power = 0; /*variable que acumula potencia del inicio*/
-const float fm = 16000;
+unsigned int NThrIni = 0; //counter de tramas para el lindar en INIT
+unsigned int NMaybeVoice = 0; //counter de tramas de maybe_voice
+unsigned int cnt_mb_silence = 0;  //counter de tramas maybe_silence
+float accum_power = 0; //variable que acumula potencia del inicio
+const float fm = 16000; //frecuencia de muestreo 
 /* 
  * As the output state is only ST_VOICE, ST_SILENCE, or ST_UNDEF,
  * only this labels are needed. You need to add all labels, in case
@@ -49,8 +49,9 @@ Features compute_features(const float *x, int N) {
    * For the moment, compute random value between 0 and 1 
    */
   Features feat;
-  feat.zcr = compute_zcr(x, N, fm);
+  
   feat.p=compute_power(x, N);
+  feat.zcr = compute_zcr(x, N, fm);
   feat.am=compute_am(x, N);
 
   return feat;
@@ -60,11 +61,12 @@ Features compute_features(const float *x, int N) {
  * DONE: Init the values of vad_data
  */
 
-VAD_DATA * vad_open(float rate, float alpha1) {
+VAD_DATA * vad_open(float rate, float alfa1) {
   VAD_DATA *vad_data = malloc(sizeof(VAD_DATA));
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
+<<<<<<< HEAD
 /*<<<<<<< HEAD
   vad_data->alfa1 = alfa1;
   vad_data->alfa2 = alfa2;
@@ -75,13 +77,15 @@ VAD_DATA * vad_open(float rate, float alpha1) {
  
 =======*/
   vad_data->alpha1=alpha1;
+=======
+  vad_data->alfa1=alfa1;
+>>>>>>> 1a2b3342a870f14c55b676632522fba02d53b5c4
   vad_data->k0 = 5; 
   vad_data->k1 = 5;
-  vad_data->pPot = 0.989; /*trigger in percent in INIT state to detect voice*/ //0.989
-  /*minimum number of stable frames*/
-  vad_data->nStableInit = 7; //7
-  vad_data->nStableVoice = 0;
-  vad_data->nStableSilence = 9; //9
+  vad_data->trigger_INIT = 0.99; //marcamos el trigger 0.989
+  vad_data->NumInitStable = 5; 
+  vad_data->NumVoiceStable = 0;
+  vad_data->NumSilenceStable = 8; 
 
   return vad_data;
 }
@@ -190,31 +194,31 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     }
 =======*/
   case ST_INIT:
-    accum_power = f.p + accum_power;
-    cnt_th_init++;
-    if(f.p >= (vad_data->pPot)*(accum_power/cnt_th_init) && (vad_data->nStableInit < cnt_th_init)){ //pPot - nStableInit
-      vad_data-> p1 = (accum_power/cnt_th_init) + vad_data->k0;   //k0
+    accum_power = f.p + accum_power;  
+    NThrIni++;
+    if(f.p >= (accum_power/NThrIni)*(vad_data->trigger_INIT) && (vad_data->NumInitStable < NThrIni)){ 
+      vad_data-> p1 = vad_data->k0 + (accum_power/NThrIni); 
       vad_data->state = ST_SILENCE; 
-      cnt_th_init = 0;
+      NThrIni = 0;
     }
     break;
 
-  case ST_MB_VOICE:
-    if (f.p >= vad_data->p1 + vad_data->k1){ //k1 - nStableVoice
-      if(cnt_mb_voice >= vad_data->nStableVoice){
+  case ST_MAYBE_VOICE:
+    if (f.p >= vad_data->p1 + vad_data->k1){
+      if(NMaybeVoice >= vad_data->NumVoiceStable){
         vad_data->state = ST_VOICE;
-        cnt_mb_voice = 0;
+        NMaybeVoice = 0;
       }else{
-        cnt_mb_voice++;
+        NMaybeVoice++;
       }
     }else
      vad_data->state = ST_SILENCE;
 
     break;
 
-  case ST_MB_SILENCE:
-    if (f.p <= vad_data->p1){ //nStableSilence
-      if(cnt_mb_silence >= vad_data->nStableSilence){
+  case ST_MAYBE_SILENCE:
+    if (f.p <= vad_data->p1){ 
+      if(cnt_mb_silence >= vad_data->NumSilenceStable){
       vad_data->state = ST_SILENCE;
       cnt_mb_silence = 0;
       }else{
@@ -226,13 +230,13 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
 
   case ST_SILENCE:
     if (f.p > vad_data->p1)
-      vad_data->state = ST_MB_VOICE;
+      vad_data->state = ST_MAYBE_VOICE;
 
     break;
 
   case ST_VOICE:
     if (f.p < vad_data->p1)
-      vad_data->state = ST_MB_SILENCE;
+      vad_data->state = ST_MAYBE_SILENCE;
     break;
 
   case ST_UNDEF:
