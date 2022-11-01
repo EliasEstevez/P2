@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
   input_wav  = args.input_wav;
   output_vad = args.output_vad;
   output_wav = args.output_wav;
-  float alpha1 = atof(args.alpha1);
+  float alfa1 = atof(args.alfa1);
 
   if (input_wav == 0 || output_vad == 0) {
     fprintf(stderr, "%s\n", args.usage_pattern);
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  vad_data = vad_open(sf_info.samplerate, alpha1);
+  vad_data = vad_open(sf_info.samplerate, alfa1);
   /* Allocate memory for buffers */
   frame_size   = vad_frame_size(vad_data);
   buffer       = (float *) malloc(frame_size * sizeof(float));
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 
     /* DONE: print only SILENCE and VOICE labels */
     /* As it is, it prints UNDEF segments but is should be merge to the proper value */
-    if (state != last_state && state != ST_UNDEF && t != last_t) {
+    if (state != last_state && t!=last_t && state!=ST_UNDEF) {
       fprintf(vadfile, "%.5f\t%.5f\t%s\n", last_t * frame_duration, t * frame_duration, state2str(last_state));
             
       last_state = state;
@@ -97,9 +97,9 @@ int main(int argc, char *argv[]) {
 
     if (sndfile_out != 0) { 
       /* DONE: go back and write zeros in silence segments */
-      if(state==ST_SILENCE||(last_state==ST_SILENCE&&state==ST_UNDEF)){
+      if(state==ST_UNDEF && (state==ST_SILENCE || last_state==ST_SILENCE)){
         sf_seek(sndfile_out, -frame_size, SEEK_CUR);
-          sf_write_float(sndfile_out, buffer_zeros, frame_size); /*writing zeros in file*/
+          sf_write_float(sndfile_out, buffer_zeros, frame_size); //escribimos los ceros en el file
       }
     }
   }
