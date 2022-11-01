@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
 
     if (sndfile_out != 0) { 
       /* DONE: go back and write zeros in silence segments */
-      if(state==ST_UNDEF && (state==ST_SILENCE || last_state==ST_SILENCE)){
+      if(state==ST_SILENCE || (state==ST_UNDEF && last_state==ST_SILENCE)){
         sf_seek(sndfile_out, -frame_size, SEEK_CUR);
           sf_write_float(sndfile_out, buffer_zeros, frame_size); //escribimos los ceros en el file
       }

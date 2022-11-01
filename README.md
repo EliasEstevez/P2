@@ -105,7 +105,7 @@ Ejercicios
   continuación, una captura de `wavesurfer` en la que se vea con claridad la señal temporal, el contorno de
   potencia y la tasa de cruces por cero, junto con el etiquetado manual de los segmentos.
 
-  <img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura1.PNG"> 
+  <img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura5.PNG"> 
 
 
 
@@ -118,7 +118,7 @@ Ejercicios
 
 	* Duración mínima razonable de los segmentos de voz y silencio.
 
-	*La duración mínima de los segmentos de voz es de 0,75s mientras que de los segmentos de silencio seria de 0,5*
+	*La duración mínima de los segmentos de voz es de 0,5s mientras que de los segmentos de silencio seria de 0,4*
 
 	* ¿Es capaz de sacar alguna conclusión a partir de la evolución de la tasa de cruces por cero?
 
@@ -135,12 +135,23 @@ Ejercicios
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
 
+	<img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura4.PNG">
+
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
+
+	*En la grafica superior podemos observar que los etiquetados son similares pero no iguales. Hay una pequeña diferencia en cada una de las etiquetas de milisegundos. Podemos suponer que el vad (superior) es mucho mas preciso que el lab (inferior). Ademas alrededor del segundo 7.3 podemos ver que hay un silencio que nosotros no tuvimos en cuenta en el momento de etiquetar el audio. Para ver mas bien cual es la diferencia usamos vad_evaluation.pl que nos da la siguiente informacion:
+
+	<img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura6.PNG">
+
+	*Vemos que los valores de voz son mas similares entre el etiquetado manual y automatico que no los valores de silencio.*
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
 
+	<img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura7.PNG">
+
+	*Observamos que el resultado de deteccion automatica son bastante buenos ya que el porcentage total es de 93.214%. Si analizamos valor a valor observamos que el porcentage mas bajo es de 75% pero la mayoria son mayores que 95% y por eso la media sale alta.*
 
 ### Trabajos de ampliación
 
@@ -150,11 +161,20 @@ Ejercicios
   la que se vea con claridad la señal antes y después de la cancelación (puede que `wavesurfer` no sea la
   mejor opción para esto, ya que no es capaz de visualizar varias señales al mismo tiempo).
 
+	*Utilizamos dos ventanas de wavesurfer para comparar el señal original con el señal con 0 en los silencios*
+
+	<img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura8.PNG">
+
+	*Por la buena calidad del microfono gran parte de los silencios ya eran cero aunque podemos apreciar algnos puntos que no (recuadro azul). Para asegurarnos de que nuestro algoritmo funciona hemos utilizado un audio aleatorio de la carpeta de datos.*
+	
+	<img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura7.PNG">
+
 #### Gestión de las opciones del programa usando `docopt_c`
 
 - Si ha usado `docopt_c` para realizar la gestión de las opciones y argumentos del programa `vad`, inserte
   una captura de pantalla en la que se vea el mensaje de ayuda del programa.
 
+	<img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura10.PNG">
 
 ### Contribuciones adicionales y/o comentarios acerca de la práctica
 
@@ -164,6 +184,7 @@ Ejercicios
 - Si lo desea, puede realizar también algún comentario acerca de la realización de la práctica que
   considere de interés de cara a su evaluación.
 
+	En esta practica hemos tenido muchos problemas en el momento de utilizar audios nuestros. Ninguno de nosotros tiene ningunos auriculares en condiciones para grabar un audio decente. Por eso en la carpeta P2 hay una gran cantidad de audios que no llegamos a utilizar. Finalmente encontramos unos auriculares buenos y podimos grabar el audio pav_4334.wav que es el que utilizamos para la elaboración de la practica. El audio pav_1121.wav es el que utilizamos en el apartado de ampliacion, sacado de la carpeta db.v4 para poner a cero los silencios con salida ooutput.wav, el audio output.wav es el audio pav_4334 con los silencios a cero (casi igual que el audio original)
 
 ### Antes de entregar la práctica
 

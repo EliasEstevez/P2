@@ -1,11 +1,9 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "pav_analysis.h"
-#include "vad.h"
-#include "pav_analysis.h"
-#include "vad.h"
 
+#include "pav_analysis.h"
+#include "vad.h"
 
 const float FRAME_TIME = 10.0F; /* in ms. */
 unsigned int NThrIni = 0; //counter de tramas para el lindar en INIT
@@ -66,20 +64,7 @@ VAD_DATA * vad_open(float rate, float alfa1) {
   vad_data->state = ST_INIT;
   vad_data->sampling_rate = rate;
   vad_data->frame_length = rate * FRAME_TIME * 1e-3;
-<<<<<<< HEAD
-/*<<<<<<< HEAD
-  vad_data->alfa1 = alfa1;
-  vad_data->alfa2 = alfa2;
-  vad_data->counter_N = 0;
-  vad_data->MAX_MB = 5;           //Mirar aquestes avriables i buscar "les nostres propies"
-  vad_data->MIN_VOICE = 30;
-  vad_data->MIN_SILENCE = 10;
- 
-=======*/
-  vad_data->alpha1=alpha1;
-=======
   vad_data->alfa1=alfa1;
->>>>>>> 1a2b3342a870f14c55b676632522fba02d53b5c4
   vad_data->k0 = 5; 
   vad_data->k1 = 5;
   vad_data->trigger_INIT = 0.99; //marcamos el trigger 0.989
@@ -119,80 +104,6 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
 
   switch (vad_data->state) {
-/*<<<<<<< HEAD
-  case ST_INIT: 
-  
-    vad_data->k1  = f.p + vad_data->alfa1-0.5;  // -0.45
-    vad_data->k2  = f.p + vad_data->alfa2 +7.61;  // +7.5
-    vad_data->state = ST_SILENCE;
-
-      /*
-      /Chivatos para comprobar los valores 
-      printf("El nivel k1 es %f\n", vad_data->k1);
-      printf("El nivel k2 es %f\n", vad_data->k2);
-      printf("El valor de alpha1 introducido es: %f\n", vad_data->alfa1);
-      printf("El valor de alpha2 introducido es: %f\n", vad_data->alfa2);
-      
-    
-    break;
-
-  case ST_SILENCE:
-    printf("ZCR en S: %f\n", f.zcr);
-    if (f.p > vad_data->k2){
-      vad_data->state = ST_MV;
-      printf("De S me voy a MV\n");
-    }else if(f.p > vad_data->k1){
-      vad_data->N_TRAMAS --;
-      vad_data->state = ST_MS;
-      printf("De S me voy a MS\n");
-      
-    }
-    break;
-
-  case ST_VOICE:
-    printf("ZCR en V: %f\n", f.zcr);
-    if (f.p < vad_data->k1){
-      vad_data->state = ST_MS;
-      printf("De V me voy a MS\n");
-    }else if(f.p < vad_data->k2){
-      vad_data->state = ST_MV;
-      printf("De V me voy a MV\n");
-    }
-    break;
-
-  case ST_MV:
-    printf("Llevo %u tramas en MV\n", vad_data->counter_N);
-    printf("ZCR en MV: %f\n", f.zcr);
-    if(f.p > vad_data->k2 ){
-      vad_data->state = ST_VOICE;
-      printf("De MV me voy a V\n");
-    }else if(f.p < vad_data->k1 ||vad_data->N_TRAMAS==0){
-      printf("He llegado al máximo de MV\n");
-      vad_data->state = ST_SILENCE;
-      vad_data->N_TRAMAS= 3;
-      printf("De MV me voy a S\n");
-    }else{
-      vad_data->N_TRAMAS--;
-      printf("Sigo MV\n");
-    }
-    break;
-
-  case ST_MS:
-    printf("Llevo %u tramas en MS\n", vad_data->counter_N);
-    printf("ZCR en MS: %f\n", f.zcr);
-    if(f.p > vad_data->k2 ||vad_data->N_TRAMAS==0){
-      vad_data->state = ST_VOICE;
-      vad_data->N_TRAMAS = 3;
-      printf("De MS me voy a V\n");
-    }else if(f.p < vad_data->k1){
-      printf("He llegado al máximo de MS\n");
-      vad_data->state = ST_SILENCE;
-      printf("De MS me voy a S\n");
-    }else {
-      vad_data->N_TRAMAS--;
-      printf("Sigo MS\n");
-    }
-=======*/
   case ST_INIT:
     accum_power = f.p + accum_power;  
     NThrIni++;
@@ -240,17 +151,10 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x) {
     break;
 
   case ST_UNDEF:
-    printf("Hem entrat a undef");
     break;
 
   }
 
-/*<<<<<<< HEAD
-  if (vad_data->state == ST_SILENCE ||vad_data->state == ST_MV)
-    return ST_SILENCE;
-  else if (vad_data->state == ST_VOICE ||vad_data->state == ST_MS)
-    return ST_VOICE;
-=======*/
   if (vad_data->state == ST_SILENCE ||vad_data->state == ST_VOICE)
     return vad_data->state;
   else

@@ -16,26 +16,8 @@ typedef struct {
   float sampling_rate;
   unsigned int frame_length;
   float last_feature; /* for debuggin purposes */
-<<<<<<< HEAD
-  //float k0;
-  //float k1;
-  //float k2;
-  //float alfa1;
-  //float alfa2;
-  //float counter_N;
-  //float num_tramas;
-  //float MAX_MB;
-  //float MIN_VOICE;
-  //float MIN_SILENCE;
-  //float N_TRAMAS;
-  //unsigned int counter; //Contador
-  //unsigned int max_init; //Número máximo de tramas que permaneceremos en estado Init
-  //unsigned int counter_ms; //Número de tramas que permaneceremos en Maybe Silence
-  //unsigned int counter_mv; //Número de tramas que permaneceremos en Maybe Voice 
-=======
   unsigned int k0, k1;
   unsigned int NumInitStable, NumVoiceStable, NumSilenceStable; // lindar para considerar un estado estable(frames)
->>>>>>> 1a2b3342a870f14c55b676632522fba02d53b5c4
   float p1;
   float alfa1;
   //posible mejora en precisión de inicio
