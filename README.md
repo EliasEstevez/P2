@@ -167,7 +167,7 @@ Ejercicios
 
 	*Por la buena calidad del microfono gran parte de los silencios ya eran cero aunque podemos apreciar algnos puntos que no (recuadro azul). Para asegurarnos de que nuestro algoritmo funciona hemos utilizado un audio aleatorio de la carpeta de datos.*
 	
-	<img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura7.PNG">
+	<img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura9.PNG">
 
 #### Gestión de las opciones del programa usando `docopt_c`
 
