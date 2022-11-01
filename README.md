@@ -139,7 +139,7 @@ Ejercicios
 
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
 
-	*En la grafica superior podemos observar que los etiquetados son similares pero no iguales. Hay una pequeña diferencia en cada una de las etiquetas de milisegundos. Podemos suponer que el vad (superior) es mucho mas preciso que el lab (inferior). Ademas alrededor del segundo 7.3 podemos ver que hay un silencio que nosotros no tuvimos en cuenta en el momento de etiquetar el audio. Para ver mas bien cual es la diferencia usamos vad_evaluation.pl que nos da la siguiente informacion:
+	*En la grafica superior podemos observar que los etiquetados son similares pero no iguales. Hay una pequeña diferencia en cada una de las etiquetas de milisegundos. Podemos suponer que el vad (superior) es mucho mas preciso que el lab (inferior). Ademas alrededor del segundo 7.3 podemos ver que hay un silencio que nosotros no tuvimos en cuenta en el momento de etiquetar el audio. Para ver mas bien cual es la diferencia usamos vad_evaluation.pl que nos da la siguiente informacion:*
 
 	<img width="1366" alt="Segmentos de Voz y Silencio" src="https://github.com/EliasEstevez/P2/blob/Estevez-Mesquida-Tarrats/Captura6.PNG">
 
@@ -184,7 +184,7 @@ Ejercicios
 - Si lo desea, puede realizar también algún comentario acerca de la realización de la práctica que
   considere de interés de cara a su evaluación.
 
-	En esta practica hemos tenido muchos problemas en el momento de utilizar audios nuestros. Ninguno de nosotros tiene ningunos auriculares en condiciones para grabar un audio decente. Por eso en la carpeta P2 hay una gran cantidad de audios que no llegamos a utilizar. Finalmente encontramos unos auriculares buenos y podimos grabar el audio pav_4334.wav que es el que utilizamos para la elaboración de la practica. El audio pav_1121.wav es el que utilizamos en el apartado de ampliacion, sacado de la carpeta db.v4 para poner a cero los silencios con salida ooutput.wav, el audio output.wav es el audio pav_4334 con los silencios a cero (casi igual que el audio original)
+	*En esta practica hemos tenido muchos problemas en el momento de utilizar audios nuestros. Ninguno de nosotros tiene ningunos auriculares en condiciones para grabar un audio decente. Por eso en la carpeta P2 hay una gran cantidad de audios que no llegamos a utilizar. Finalmente encontramos unos auriculares buenos y podimos grabar el audio pav_4334.wav que es el que utilizamos para la elaboración de la practica. El audio pav_1121.wav es el que utilizamos en el apartado de ampliacion, sacado de la carpeta db.v4 para poner a cero los silencios con salida ooutput.wav, el audio output.wav es el audio pav_4334 con los silencios a cero (casi igual que el audio original)*
 
 ### Antes de entregar la práctica
 
